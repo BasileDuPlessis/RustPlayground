@@ -58,7 +58,7 @@ fn int_to_roman(input:u32)->String {
     let input_as_string = input.to_string();
     let length = input_as_string.len();
 
-
+    //build a vector with unit, ten, hundred and thousand 
     for (index, value) in input_as_string.chars().enumerate() {
         match (index==0, length>3) {
             (false, true) if index<length-3 => vec_value[0].push(value),
@@ -78,12 +78,12 @@ fn int_to_roman(input:u32)->String {
         match rank_occ.parse::<usize>() {
             Ok(r) => 
                 if r<4 || r>9 {
-                    output.push_str(&library[library_index].repeat(r as usize));
+                    output.push_str(&library[library_index].repeat(r));
                 } else if r==4 {
                     output.push_str(&library[library_index+1]);
                     output.push_str(&library[library_index]);                 
                 } else if r<9 {
-                    output.push_str(&library[library_index].repeat(r as usize));
+                    output.push_str(&library[library_index].repeat(r));
                     output.push_str(&library[library_index+1]);                    
                 } else if r==9 {
                     output.push_str(&library[library_index+2]);
