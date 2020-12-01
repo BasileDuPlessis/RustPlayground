@@ -54,22 +54,23 @@ fn int_to_roman(input:u32)->String {
 
     let library = ["I", "V", "X", "L", "C", "D", "M"];
 
-    let mut reverse_vec_value:Vec<String> = Vec::new();
+    let mut vec_value:Vec<String> = Vec::new();
     let input_as_string = input.to_string();
+    let length = input_as_string.len();
 
-    //Transform 12345 into a vector of rank numbers: Vec[5, 4, 3, 12]
-    for (index, value) in input_as_string.chars().rev().enumerate() {
-        if index < 3 {
-            reverse_vec_value.push(value.to_string());
-        } else {
-            reverse_vec_value.push(input_as_string[0..(input_as_string.len()-3)].to_string());
-            break;
-        } 
+
+    for (index, value) in input_as_string.chars().enumerate() {
+        match (index==0, length>3) {
+            (false, true) if index<length-3 => vec_value[0].push(value),
+            _ => vec_value.push(value.to_string())
+        }
     }
+
+    vec_value.reverse();
 
     let mut output = String::new();
 
-    for (index, rank_occ) in reverse_vec_value.iter().enumerate() {
+    for (index, rank_occ) in vec_value.iter().enumerate() {
         let library_index = index * 2;
 
         if library_index >= library.len() {continue;}
@@ -113,7 +114,8 @@ fn test_int_to_roman() {
     assert_eq!(int_to_roman(20), "XX".to_string());
     assert_eq!(int_to_roman(4), "IV".to_string());
     assert_eq!(int_to_roman(49), "XLIX".to_string());
-    assert_eq!(int_to_roman(2222), "MMCCXXII".to_string());
+    assert_eq!(int_to_roman(999), "CMXCIX".to_string());
+    assert_eq!(int_to_roman(2222), "MMCCXXII".to_string()); 
     assert_eq!(int_to_roman(12499), "MMMMMMMMMMMMCDXCIX".to_string());
 }
 
