@@ -63,24 +63,23 @@ fn int_to_roman(input:usize)->String {
         else {vec![a[0].to_string(), a[2].to_string()].concat()}
     };
 
-
     if input>1000 {
         output = "M".repeat((input as f32/1000_f32).floor() as usize);
     }
     if input>100 {
-        let u = ((input as f32/100_f32).floor() as usize) % 10;
-        output = format!("{}{}", output, translate(u, ["C", "D", "M"]));
-
+        output = format!("{}{}", output,
+            translate(((input as f32/100_f32).floor() as usize) % 10, ["C", "D", "M"])
+        );
     }
     if input>10 {
-        let u = ((input as f32/10_f32).floor() as usize) % 10;
-        output = format!("{}{}", output, translate(u, ["X", "L", "C"]));
-
+        output = format!("{}{}", output,
+            translate(((input as f32/10_f32).floor() as usize) % 10, ["X", "L", "C"])
+        );
     }
     if input>0 {
-        let u = input % 10;
-        output = format!("{}{}", output, translate(u, ["I", "V", "X"]));
-
+        output = format!("{}{}", output,
+            translate(input % 10, ["I", "V", "X"])
+        );
     } else {
         output = "".to_string();
     }
