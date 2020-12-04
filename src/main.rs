@@ -1,4 +1,4 @@
-use std::{collections::HashMap, char::from_u32_unchecked};
+use std::{collections::HashMap};
 
 fn main() {
 
@@ -81,9 +81,8 @@ fn int_to_roman(input:usize)->String {
         let u = input % 10;
         output = format!("{}{}", output, translate(u, ["I", "V", "X"]));
 
-    } 
-    if input==0 {
-        return "".to_string();
+    } else {
+        output = "".to_string();
     }
    
     output
