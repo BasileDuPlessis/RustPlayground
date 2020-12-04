@@ -1,8 +1,10 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, char::from_u32_unchecked};
 
 fn main() {
-    let v = roman_to_int("MMXIII");
-    println!("{:?}", v);
+
+    println!("{:?}", roman_to_int("MMXIII"));
+
+    println!("{:?}", int_to_roman(22));
 
     for i in 0..100 {
         println!("{}", fizzbuzz(i))
@@ -50,52 +52,41 @@ fn roman_to_int(s:&str)->Option<u32> {
 }
 
 /// Transform an interger into a Roman number
-fn int_to_roman(input:u32)->String {
-
-    let library = ["I", "V", "X", "L", "C", "D", "M"];
-
-    let mut vec_value:Vec<String> = Vec::new();
-    let input_as_string = input.to_string();
-    let length = input_as_string.len();
-
-    //build a vector with unit, ten, hundred and thousand 
-    for (index, value) in input_as_string.chars().enumerate() {
-        match (index==0, length>3) {
-            (false, true) if index<length-3 => vec_value[0].push(value),
-            _ => vec_value.push(value.to_string())
-        }
-    }
-
-    vec_value.reverse();
+fn int_to_roman(input:usize)->String {
 
     let mut output = String::new();
 
-    for (index, rank_occ) in vec_value.iter().enumerate() {
-        let library_index = index * 2;
+    let translate = |u:usize, a:[&str; 3]| {
+        if u<4 {a[0].repeat(u)}
+        else if u==4 {a[0..2].concat()}
+        else if u<9 {vec![a[1].to_string(), a[0].repeat(u-5)].concat()}
+        else {vec![a[0].to_string(), a[2].to_string()].concat()}
+    };
 
-        if library_index >= library.len() {continue;}
 
-        match rank_occ.parse::<usize>() {
-            Ok(r) => 
-                if r<4 || r>9 {
-                    output.push_str(&library[library_index].repeat(r));
-                } else if r==4 {
-                    output.push_str(&library[library_index+1]);
-                    output.push_str(&library[library_index]);                 
-                } else if r<9 {
-                    output.push_str(&library[library_index].repeat(r));
-                    output.push_str(&library[library_index+1]);                    
-                } else if r==9 {
-                    output.push_str(&library[library_index+2]);
-                    output.push_str(&library[library_index]);                    
-                }                    
-            ,
-            Err(_) => continue
-        }        
+    if input>1000 {
+        output = "M".repeat((input as f32/1000_f32).floor() as usize);
+    }
+    if input>100 {
+        let u = ((input as f32/100_f32).floor() as usize) % 10;
+        output = format!("{}{}", output, translate(u, ["C", "D", "M"]));
 
     }
-    
-    output.chars().rev().collect()
+    if input>10 {
+        let u = ((input as f32/10_f32).floor() as usize) % 10;
+        output = format!("{}{}", output, translate(u, ["X", "L", "C"]));
+
+    }
+    if input>0 {
+        let u = input % 10;
+        output = format!("{}{}", output, translate(u, ["I", "V", "X"]));
+
+    } 
+    if input==0 {
+        return "".to_string();
+    }
+   
+    output
 }
 
 fn fizzbuzz(n:u8) -> String {
@@ -116,6 +107,7 @@ fn test_int_to_roman() {
     assert_eq!(int_to_roman(49), "XLIX".to_string());
     assert_eq!(int_to_roman(999), "CMXCIX".to_string());
     assert_eq!(int_to_roman(2222), "MMCCXXII".to_string()); 
+    assert_eq!(int_to_roman(3687), "MMMDCLXXXVII".to_string()); 
     assert_eq!(int_to_roman(12499), "MMMMMMMMMMMMCDXCIX".to_string());
 }
 
