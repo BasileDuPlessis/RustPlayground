@@ -2,9 +2,9 @@ use std::{collections::HashMap};
 
 fn main() {
 
-    println!("{:?}", roman_to_int("MMXIII"));
+    println!("{:?}", roman_to_arabic("MMXIII"));
 
-    println!("{:?}", int_to_roman(22));
+    println!("{:?}", arabic_to_roman(22));
 
     for i in 0..100 {
         println!("{}", fizzbuzz(i))
@@ -17,7 +17,7 @@ fn main() {
 /// -SUM if both values are equal
 /// -SUBSTRACT if first value below second
 /// -IGNORE the second value if first > second
-fn roman_to_int(s:&str)->Option<u32> {
+fn roman_to_arabic(s:&str)->Option<u32> {
     let mut result = 0;
 
     let values: HashMap<char, u32> =[
@@ -52,26 +52,29 @@ fn roman_to_int(s:&str)->Option<u32> {
 }
 
 /// Transform an interger into a Roman number
-fn int_to_roman(input:usize)->String {
+fn arabic_to_roman(input:usize)->String {
 
     let mut output = String::new();
 
     let translate = |u:usize, a:[&str; 3]| {
-        if u<4 {a[0].repeat(u)}
-        else if u==4 {a[0..2].concat()}
-        else if u<9 {vec![a[1].to_string(), a[0].repeat(u-5)].concat()}
-        else {vec![a[0].to_string(), a[2].to_string()].concat()}
+        match (u==4, u==9, u>=5) {
+            (true, _, _) => a[0].to_owned() + a[1],
+            (_, true, _) => a[0].to_owned() + a[2],
+            (_, _, true) => a[1].to_owned() + &a[0].repeat(u-5),
+            _ => a[0].repeat(u)
+        }
     };
 
-    if input>1000 {
+
+    if input>=1000 {
         output = "M".repeat((input as f32/1000_f32).floor() as usize);
     }
-    if input>100 {
+    if input>=100 {
         output = format!("{}{}", output,
             translate(((input as f32/100_f32).floor() as usize) % 10, ["C", "D", "M"])
         );
     }
-    if input>10 {
+    if input>=10 {
         output = format!("{}{}", output,
             translate(((input as f32/10_f32).floor() as usize) % 10, ["X", "L", "C"])
         );
@@ -81,7 +84,7 @@ fn int_to_roman(input:usize)->String {
             translate(input % 10, ["I", "V", "X"])
         );
     } else {
-        output = "".to_string();
+        output = "".to_owned();
     }
    
     output
@@ -89,38 +92,43 @@ fn int_to_roman(input:usize)->String {
 
 fn fizzbuzz(n:u8) -> String {
     match (n%3, n%5) {
-        (0, 0) => "fizzbuzz".to_string(),
-        (0, _) => "fizz".to_string(),
-        (_, 0) => "buzz".to_string(),
+        (0, 0) => "fizzbuzz".to_owned(),
+        (0, _) => "fizz".to_owned(),
+        (_, 0) => "buzz".to_owned(),
         _ => n.to_string()
     }
 }
 
+
+
+
 #[test]
-fn test_int_to_roman() {
-    assert_eq!(int_to_roman(0), "".to_string());
-    assert_eq!(int_to_roman(2), "II".to_string());
-    assert_eq!(int_to_roman(20), "XX".to_string());
-    assert_eq!(int_to_roman(4), "IV".to_string());
-    assert_eq!(int_to_roman(49), "XLIX".to_string());
-    assert_eq!(int_to_roman(999), "CMXCIX".to_string());
-    assert_eq!(int_to_roman(2222), "MMCCXXII".to_string()); 
-    assert_eq!(int_to_roman(3687), "MMMDCLXXXVII".to_string()); 
-    assert_eq!(int_to_roman(12499), "MMMMMMMMMMMMCDXCIX".to_string());
+fn test_arabic_to_roman() {
+    assert_eq!(arabic_to_roman(0), "");
+    assert_eq!(arabic_to_roman(2), "II");    
+    assert_eq!(arabic_to_roman(4), "IV");
+    assert_eq!(arabic_to_roman(5), "V");
+    assert_eq!(arabic_to_roman(9), "IX");
+    assert_eq!(arabic_to_roman(10), "X");
+    assert_eq!(arabic_to_roman(21), "XXI");
+    assert_eq!(arabic_to_roman(49), "XLIX");
+    assert_eq!(arabic_to_roman(999), "CMXCIX");
+    assert_eq!(arabic_to_roman(2222), "MMCCXXII"); 
+    assert_eq!(arabic_to_roman(3687), "MMMDCLXXXVII"); 
 }
 
 #[test]
-fn test_roman_to_int() {
-    assert_eq!(roman_to_int(""), Some(0));
-    assert_eq!(roman_to_int("I"), Some(1));
-    assert_eq!(roman_to_int("II"), Some(2));
-    assert_eq!(roman_to_int("III"), Some(3));
-    assert_eq!(roman_to_int("IV"), Some(4));
-    assert_eq!(roman_to_int("XIV"), Some(14));
-    assert_eq!(roman_to_int("XZX"), Some(20));
-    assert_eq!(roman_to_int("XLIX"), Some(49));
-    assert_eq!(roman_to_int("CDXLVIII"), Some(448));
-    assert_eq!(roman_to_int("MMMDCCLXVII"), Some(3767));
+fn test_roman_to_arabic() {
+    assert_eq!(roman_to_arabic(""), Some(0));
+    assert_eq!(roman_to_arabic("I"), Some(1));
+    assert_eq!(roman_to_arabic("II"), Some(2));
+    assert_eq!(roman_to_arabic("III"), Some(3));
+    assert_eq!(roman_to_arabic("IV"), Some(4));
+    assert_eq!(roman_to_arabic("XIV"), Some(14));
+    assert_eq!(roman_to_arabic("XZX"), Some(20));
+    assert_eq!(roman_to_arabic("XLIX"), Some(49));
+    assert_eq!(roman_to_arabic("CDXLVIII"), Some(448));
+    assert_eq!(roman_to_arabic("MMMDCCLXVII"), Some(3767));
 }
 
 #[test]
