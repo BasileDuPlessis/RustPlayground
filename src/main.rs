@@ -74,7 +74,7 @@ fn arabic_to_roman(input:usize)->String {
     ];
 
     for (i, lib) in library.iter().enumerate() {
-        let i = 10_usize.pow(library.len() as u32) / 10_usize.pow(i as u32);
+        let i = 10_usize.pow((library.len() - 1 - i) as u32);
         if input >= i {
             output = format!("{}{}", output,
                 translate(((input as f32/i as f32).floor() as usize) % 10, lib)
